@@ -17,9 +17,10 @@
 
 package org.apache.commons.scxml2.env.javascript;
 
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
+import javax.naming.Binding;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -164,6 +165,25 @@ public class JSEvaluator implements Evaluator {
         } catch (Exception x) {
             throw new SCXMLExpressionException("Error evaluating ['" + expression + "'] " + x);
         }
+    }
+
+    /**
+     * Add Script Variables encapsulated in a Java class to the global context of the ScriptEngine
+     * @see ScriptContext
+     * @see <a href="https://docs.oracle.com/javase/7/docs/technotes/guides/scripting/programmer_guide/#scriptvars">Script Variables</a>
+     * @param name Name of the script object
+     * @param bindings Backing class for the script object
+     */
+    public void addGlobalBindings(String name, Object bindings) {
+        factory.getBindings().put(name, bindings);
+    }
+
+    /**
+     * @see #addGlobalBindings(String, Object)
+     * @param bindings Map of script object -> class instance
+     */
+    public void addGlobalBindings(Map<String, Object> bindings) {
+        factory.getBindings().putAll(bindings);
     }
 
     /**

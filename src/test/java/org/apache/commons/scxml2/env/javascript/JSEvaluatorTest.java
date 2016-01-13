@@ -17,6 +17,7 @@
 
 package org.apache.commons.scxml2.env.javascript;
 
+import java.io.File;
 import java.io.StringReader;
 
 import javax.xml.xpath.XPath;
@@ -44,6 +45,7 @@ import org.w3c.dom.Node;
  *  <li> Javascript expressions referencing SCXML data model elements.
  *  <li> Javascript expressions referencing SCXML data model locations.
  *  <li> Javascript functions referencing SCXML context variables.
+ *  <li> Javascript functions referencing ad-hoc script variables.
  *  </ul>
  */
 
@@ -165,7 +167,7 @@ public class JSEvaluatorTest {
      *
      */    
     @Test
-    public void testIllegalExpresssion() {
+    public void testIllegalExpression() {
         Evaluator evaluator = new JSEvaluator();
 
         Assert.assertNotNull(evaluator);
@@ -304,6 +306,15 @@ public class JSEvaluatorTest {
         Assert.assertEquals("Invalid function result",Double.valueOf(120.0),evaluator.eval(context,FUNCTION));
     }
 
+    /**
+     * Test evaluation of Javascript functions via script variables from the ScriptEngine global bindings.
+     */
+    @Test
+    public void testScriptVariables() throws SCXMLExpressionException {
+        JSEvaluator evaluator = new JSEvaluator();
+        evaluator.addGlobalBindings("file", new File("/variable/test.txt"));
+        Assert.assertEquals("test.txt", (String) evaluator.evalScript(context, "file.getName()"));
+    }
 
     // INNER CLASSES
 
